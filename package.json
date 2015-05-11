@@ -1,0 +1,27 @@
+{
+  "name": "codechat",
+  "version": "0.0.0",
+  "description": "chat app",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/darthneel/codechat.git"
+  },
+  "author": "Neel Patel <neelp22@gmail.com> (http://www.github.com/darthneel)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/darthneel/codechat/issues"
+  },
+  "homepage": "https://github.com/darthneel/codechat",
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "underscore": "^1.8.3",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
