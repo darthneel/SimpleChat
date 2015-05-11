@@ -1,0 +1,25 @@
+{
+  "name": "codechat",
+  "version": "0.0.0",
+  "homepage": "https://github.com/darthneel/codechat",
+  "authors": [
+    "darthneel <neelp22@gmail.com>"
+  ],
+  "description": "chat app for code",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "./public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "semantic-ui": "~1.12.2",
+    "react": "~0.13.3",
+    "firebase": "~2.2.4"
+  }
+}
