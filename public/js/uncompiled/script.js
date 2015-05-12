@@ -4,7 +4,17 @@ window.Backbone = require('Backbone');
 window.Backbone.$ = $;
 window.React = require('react');
 
-var ChatApp = ChatApp || {};
+var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components: {} };
 window.ChatApp = ChatApp;
 
-var AppComponent = require("./app.jsx");
+// Models
+require("./Room");
+require("./User");
+
+// Collections
+require("./RoomsCollection.js");
+require("./UsersCollection.js");
+
+
+// Components
+require("./RoomSelectorComponents.jsx");
