@@ -35,7 +35,13 @@ var RoomBoxComponent = React.createClass({
     this.bindAsArray(new Firebase(firebaseApp + "rooms"), "rooms");
   },
   onFormSubmit: function(text){
-    this.firebaseRefs["rooms"].push({roomName: text, users: ["testing"]})
+    var userName = this.displayUsernameModal();
+    console.log(userName);
+    this.firebaseRefs["rooms"].push({roomName: text, users: [userName]})
+  },
+  displayUsernameModal: function(){
+    var userName = prompt("Enter your username")
+    return userName;
   },
   render: function(){
     return (
