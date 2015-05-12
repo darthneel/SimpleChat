@@ -22,6 +22,9 @@
     "jquery": "^2.1.4",
     "react": "^0.13.3",
     "reactify": "^1.1.1",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "gulp-browserify": "^0.5.1",
+    "gulp-react": "^3.0.1",
+    "reactfire": "^0.4.0"
   }
 }

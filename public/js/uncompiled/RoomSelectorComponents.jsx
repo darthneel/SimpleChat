@@ -2,21 +2,52 @@ console.log('Room Selector Components loaded');
 
 'use strict'
 
-var RoomBoxComponent = React.createClass({
+var firebaseApp = "https://dncodechat.firebaseio.com/";
+
+var RoomCreateForm = React.createClass({
+  handleSubmit: function(e){
+    e.preventDefault();
+    var roomName = this.refs.room_name.getDOMNode().value.trim();
+    this.refs.room_name.getDOMNode().value = '';
+
+    console.log("Submit clicked");
+    console.log(roomName);
+
+    this.props. onFormSubmit(roomName);
+  },
   render: function(){
     return (
-      <h1>Room Box</h1>
+      <form onSubmit={this.handleSubmit}>
+        <input type="text" ref="room_name" />
+        <button>Create</button>
+      </form>
     );
   }
 });
 
-var RoomCreateForm = React.createClass({
+
+var RoomBoxComponent = React.createClass({
+  mixins: [ReactFire],
+
+  componentDidMount: function(){
+    console.log(this.props.collection);
+
+    this.bindAsArray(new Firebase(firebaseApp + "rooms"), "rooms");
+  },
+  onFormSubmit: function(text){
+    this.firebaseRefs["rooms"].push({roomName: text, users: ["testing"]})
+  },
   render: function(){
-    
+    return (
+      <div>
+        <h1>Room Box</h1>
+        <RoomCreateForm onFormSubmit={this.onFormSubmit} />
+      </div>
+    );
   }
 });
 
 
 
-React.render(<RoomBoxComponent />, $('.roombox')[0]);
+React.render(<RoomBoxComponent collection={new ChatApp.Collections.RoomsCollection()} />, $('.roombox')[0]);
 

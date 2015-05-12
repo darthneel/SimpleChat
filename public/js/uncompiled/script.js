@@ -3,6 +3,7 @@ window._ = require('underscore');
 window.Backbone = require('Backbone');
 window.Backbone.$ = $;
 window.React = require('react');
+window.ReactFire = require('reactfire');
 
 var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components: {} };
 window.ChatApp = ChatApp;
