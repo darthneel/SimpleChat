@@ -2,7 +2,6 @@ console.log('Room Selector Components loaded');
 
 'use strict'
 
-var firebaseApp = "https://dncodechat.firebaseio.com/";
 
 var RoomCreateForm = React.createClass({
   handleSubmit: function(e){
@@ -13,9 +12,10 @@ var RoomCreateForm = React.createClass({
     console.log("Submit clicked");
     console.log(roomName);
 
-    this.props. onFormSubmit(roomName);
+    this.props.onFormSubmit(roomName);
   },
   render: function(){
+    console.log(this);
     return (
       <form onSubmit={this.handleSubmit}>
         <input type="text" ref="room_name" />
@@ -25,35 +25,66 @@ var RoomCreateForm = React.createClass({
   }
 });
 
+var RoomItemComponent = React.createClass({
+  componentDidMount: function(){ 
+    console.log("roomitemcomp mounted");
+  },
+  render: function(){
+    console.log('In room item render');
+    console.log(this.props.roomName);
+    console.log(this.props.users);
+    return (
+      <div>
+        <h2>{this.props.roomName}</h2>
+        <h3>Users</h3>
+          {this.props.users.map(function(user){
+             return <li>{user}</li>  
+          })}
+          <hr />
+      </div>
+    );
+  }
+});
 
 var RoomBoxComponent = React.createClass({
-  mixins: [ReactFire],
 
   componentDidMount: function(){
-    console.log(this.props.collection);
-
-    this.bindAsArray(new Firebase(firebaseApp + "rooms"), "rooms");
+    this.props.collection.on('add remove change', this.forceUpdate.bind(this, null));
   },
-  onFormSubmit: function(text){
+  onFormSubmit: function(roomName){
     var userName = this.displayUsernameModal();
-    console.log(userName);
-    this.firebaseRefs["rooms"].push({roomName: text, users: [userName]})
+    this.props.collection.add( {roomName: roomName, users: [userName]} );
   },
   displayUsernameModal: function(){
     var userName = prompt("Enter your username")
     return userName;
   },
   render: function(){
+    console.log('in roombox render');
+    var rooms = this.props.collection.models.map(function(room){
+      return (
+        <div>
+            <RoomItemComponent key={room.id} roomName={room.get("roomName")} users={room.get("users")} />
+        </div>
+      ) 
+    })
+
+    var form = <RoomCreateForm onFormSubmit={this.onFormSubmit} />
+
     return (
       <div>
         <h1>Room Box</h1>
-        <RoomCreateForm onFormSubmit={this.onFormSubmit} />
+        <div>
+          {form}
+        </div>
+
+          {rooms}
+
+        <h3>Bottom</h3>
       </div>
     );
   }
 });
 
 
-
-React.render(<RoomBoxComponent collection={new ChatApp.Collections.RoomsCollection()} />, $('.roombox')[0]);
-
+var RoomBoxElement = React.render(<RoomBoxComponent collection={new ChatApp.Collections.RoomsCollection()} />, $('.roombox')[0]);

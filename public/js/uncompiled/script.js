@@ -1,9 +1,10 @@
-window.$ = require('jquery');
-window._ = require('underscore');
-window.Backbone = require('Backbone');
-window.Backbone.$ = $;
+// window.$ = require('jquery');
+// window._ = require('underscore');
+// window.Backbone = require('Backbone');
+// window.Backbone.$ = $;
 window.React = require('react');
 window.ReactFire = require('reactfire');
+// window.Firebase = require('firebase');
 
 var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components: {} };
 window.ChatApp = ChatApp;
