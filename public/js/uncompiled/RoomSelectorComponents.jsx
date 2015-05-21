@@ -10,12 +10,9 @@ var RoomCreateForm = React.createClass({
     this.refs.room_name.getDOMNode().value = '';
 
     console.log("Submit clicked");
-    console.log(roomName);
-
     this.props.onFormSubmit(roomName);
   },
   render: function(){
-    console.log(this);
     return (
       <form onSubmit={this.handleSubmit}>
         <input type="text" ref="room_name" />
@@ -29,12 +26,13 @@ var RoomItemComponent = React.createClass({
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
+  enterRoom: function(){
+    console.log('Enter room');
+  },
   render: function(){
     console.log('In room item render');
-    console.log(this.props.roomName);
-    console.log(this.props.users);
     return (
-      <div>
+      <div onClick={this.enterRoom}>
         <h2>{this.props.roomName}</h2>
         <h3>Users</h3>
           {this.props.users.map(function(user){

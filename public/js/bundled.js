@@ -20022,12 +20022,9 @@ var RoomCreateForm = React.createClass({displayName: "RoomCreateForm",
     this.refs.room_name.getDOMNode().value = '';
 
     console.log("Submit clicked");
-    console.log(roomName);
-
     this.props.onFormSubmit(roomName);
   },
   render: function(){
-    console.log(this);
     return (
       React.createElement("form", {onSubmit: this.handleSubmit}, 
         React.createElement("input", {type: "text", ref: "room_name"}), 
@@ -20041,12 +20038,13 @@ var RoomItemComponent = React.createClass({displayName: "RoomItemComponent",
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
+  enterRoom: function(){
+    console.log('Enter room');
+  },
   render: function(){
     console.log('In room item render');
-    console.log(this.props.roomName);
-    console.log(this.props.users);
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {onClick: this.enterRoom}, 
         React.createElement("h2", null, this.props.roomName), 
         React.createElement("h3", null, "Users"), 
           this.props.users.map(function(user){
@@ -20057,8 +20055,6 @@ var RoomItemComponent = React.createClass({displayName: "RoomItemComponent",
     );
   }
 });
-
-
 
 var RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
 
@@ -20113,7 +20109,7 @@ ChatApp.Collections.RoomsCollection = Backbone.Firebase.Collection.extend({
 
 },{}],162:[function(require,module,exports){
 ChatApp.Models.User = Backbone.Model.extend({
-
+  
 });
 
 },{}],163:[function(require,module,exports){
