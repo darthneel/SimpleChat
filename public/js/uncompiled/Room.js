@@ -1,7 +1,9 @@
 ChatApp.Models.Room = Backbone.Model.extend({
   defaults: {
     roomName: "",
-    users: []
+  },
+  initialize: function(){
+    console.log('new room model created');
   }
 });
 

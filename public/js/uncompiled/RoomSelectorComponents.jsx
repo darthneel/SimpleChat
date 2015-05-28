@@ -1,9 +1,4 @@
-console.log('Room Selector Components loaded');
-
-'use strict'
-
-
-var RoomCreateForm = React.createClass({
+ChatApp.Components.RoomCreateForm = React.createClass({
   handleSubmit: function(e){
     e.preventDefault();
     var roomName = this.refs.room_name.getDOMNode().value.trim();
@@ -22,12 +17,13 @@ var RoomCreateForm = React.createClass({
   }
 });
 
-var RoomItemComponent = React.createClass({
+ChatApp.Components.RoomItemComponent = React.createClass({
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
   enterRoom: function(){
-    console.log('Enter room');
+
+    Backbone.history.navigate('/rooms/' + this.props.id, {trigger: true});
   },
   render: function(){
     console.log('In room item render');
@@ -44,14 +40,17 @@ var RoomItemComponent = React.createClass({
   }
 });
 
-var RoomBoxComponent = React.createClass({
+
+
+ChatApp.Components.RoomBoxComponent = React.createClass({
 
   componentDidMount: function(){
-    this.props.collection.on('add remove change', this.forceUpdate.bind(this, null));
+    this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
   },
   onFormSubmit: function(roomName){
     var userName = this.displayUsernameModal();
-    this.props.collection.add( {roomName: roomName, users: [userName]} );
+    
+    var newRoomInfo = this.props.collection.create( { roomName: roomName, chatLog: {Room: "Welcome to " + roomName}, users: [userName] } );
   },
   displayUsernameModal: function(){
     var userName = prompt("Enter your username")
@@ -62,12 +61,12 @@ var RoomBoxComponent = React.createClass({
     var rooms = this.props.collection.models.map(function(room){
       return (
         <div>
-            <RoomItemComponent key={room.id} roomName={room.get("roomName")} users={room.get("users")} />
+            <ChatApp.Components.RoomItemComponent key={room.id} id={room.id} roomName={room.get("roomName")} users={room.get("users")} />
         </div>
       ) 
     })
 
-    var form = <RoomCreateForm onFormSubmit={this.onFormSubmit} />
+    var form = <ChatApp.Components.RoomCreateForm onFormSubmit={this.onFormSubmit} />
 
     return (
       <div>
@@ -84,5 +83,3 @@ var RoomBoxComponent = React.createClass({
   }
 });
 
-
-var RoomBoxElement = React.render(<RoomBoxComponent collection={new ChatApp.Collections.RoomsCollection()} />, $('.roombox')[0]);

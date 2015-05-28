@@ -8,22 +8,31 @@ window.ReactFire = require('reactfire');
 // window.Firebase = require('firebase');
 
 var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components: {} };
+ChatApp.loaded = false;
 window.ChatApp = ChatApp;
 
-// Models
-require("./Room");
 require("./User");
-
-// Collections
-require("./RoomsCollection.js");
 require("./UsersCollection.js");
 
+
+
+require("./Room");
+require("./RoomsCollection.js");
 
 // Components
 require("./RoomSelectorComponents.jsx");
 
+require("./router.jsx");
 
-},{"./Room":159,"./RoomSelectorComponents.jsx":160,"./RoomsCollection.js":161,"./User":162,"./UsersCollection.js":163,"react":157,"reactfire":158}],2:[function(require,module,exports){
+$(function(){
+
+ // Backbone.history.start({pushState: true, root: '/'});
+  Backbone.history.start();
+
+});
+
+
+},{"./Room":159,"./RoomSelectorComponents.jsx":160,"./RoomsCollection.js":161,"./User":162,"./UsersCollection.js":163,"./router.jsx":164,"react":157,"reactfire":158}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -20003,19 +20012,16 @@ var ReactFireMixin = {
 ChatApp.Models.Room = Backbone.Model.extend({
   defaults: {
     roomName: "",
-    users: []
+  },
+  initialize: function(){
+    console.log('new room model created');
   }
 });
 
 
 
 },{}],160:[function(require,module,exports){
-console.log('Room Selector Components loaded');
-
-'use strict'
-
-
-var RoomCreateForm = React.createClass({displayName: "RoomCreateForm",
+ChatApp.Components.RoomCreateForm = React.createClass({displayName: "RoomCreateForm",
   handleSubmit: function(e){
     e.preventDefault();
     var roomName = this.refs.room_name.getDOMNode().value.trim();
@@ -20034,12 +20040,13 @@ var RoomCreateForm = React.createClass({displayName: "RoomCreateForm",
   }
 });
 
-var RoomItemComponent = React.createClass({displayName: "RoomItemComponent",
+ChatApp.Components.RoomItemComponent = React.createClass({displayName: "RoomItemComponent",
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
   enterRoom: function(){
-    console.log('Enter room');
+
+    Backbone.history.navigate('/rooms/' + this.props.id, {trigger: true});
   },
   render: function(){
     console.log('In room item render');
@@ -20056,14 +20063,17 @@ var RoomItemComponent = React.createClass({displayName: "RoomItemComponent",
   }
 });
 
-var RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
+
+
+ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
 
   componentDidMount: function(){
-    this.props.collection.on('add remove change', this.forceUpdate.bind(this, null));
+    this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
   },
   onFormSubmit: function(roomName){
     var userName = this.displayUsernameModal();
-    this.props.collection.add( {roomName: roomName, users: [userName]} );
+    
+    var newRoomInfo = this.props.collection.create( { roomName: roomName, chatLog: {Room: "Welcome to " + roomName}, users: [userName] } );
   },
   displayUsernameModal: function(){
     var userName = prompt("Enter your username")
@@ -20074,12 +20084,12 @@ var RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
     var rooms = this.props.collection.models.map(function(room){
       return (
         React.createElement("div", null, 
-            React.createElement(RoomItemComponent, {key: room.id, roomName: room.get("roomName"), users: room.get("users")})
+            React.createElement(ChatApp.Components.RoomItemComponent, {key: room.id, id: room.id, roomName: room.get("roomName"), users: room.get("users")})
         )
       ) 
     })
 
-    var form = React.createElement(RoomCreateForm, {onFormSubmit: this.onFormSubmit})
+    var form = React.createElement(ChatApp.Components.RoomCreateForm, {onFormSubmit: this.onFormSubmit})
 
     return (
       React.createElement("div", null, 
@@ -20097,8 +20107,6 @@ var RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
 });
 
 
-var RoomBoxElement = React.render(React.createElement(RoomBoxComponent, {collection: new ChatApp.Collections.RoomsCollection()}), $('.roombox')[0]);
-
 
 },{}],161:[function(require,module,exports){
 ChatApp.Collections.RoomsCollection = Backbone.Firebase.Collection.extend({
@@ -20109,12 +20117,62 @@ ChatApp.Collections.RoomsCollection = Backbone.Firebase.Collection.extend({
 
 },{}],162:[function(require,module,exports){
 ChatApp.Models.User = Backbone.Model.extend({
-  
+  defaults: {
+    name: ""
+  }
 });
 
 },{}],163:[function(require,module,exports){
-ChatApp.Collections.UsersCollection = Backbone.Model.extend({
-  model: ChatApp.Models.User
+ChatApp.Collections.UsersCollection = Backbone.Firebase.Collection.extend({
+  model: ChatApp.Models.User,
+  initialize: function(models, options){
+    this.roomURL = options.roomUrl
+    // debugger
+  },
+  autoSync: true,
+  url: function(){
+
+    return this.roomURL + '/users'
+  }
+});
+
+
+},{}],164:[function(require,module,exports){
+function appStart(){
+  ChatApp.collection = new ChatApp.Collections.RoomsCollection()
+  var RoomBoxElement = React.render(React.createElement(ChatApp.Components.RoomBoxComponent, {collection: ChatApp.collection}), $('.roombox')[0]);
+  ChatApp.loaded = !ChatApp.loaded;
+};
+
+// function loadCheck(){
+//   Chatapp.loaded ? return : appStart()
+// };
+
+ChatApp.Router.AppRouter = Backbone.Router.extend({
+  initialize: function(){
+    console.log('router made');
+    appStart();
+  },
+  routes: {
+    "": "home",
+    "rooms/:id": "rooms"
+  }
+});
+
+var router = new ChatApp.Router.AppRouter();
+
+router.on('route:home', function(){
+  // if (!ChatApp.loaded) {
+  //   loadCheck()
+  // };
+
+  console.log('home route');
+
+});
+
+router.on('route:rooms', function(id){
+  console.log('rooms route')
+  console.log(id);
 });
 
 

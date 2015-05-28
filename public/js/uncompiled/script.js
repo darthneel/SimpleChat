@@ -7,16 +7,25 @@ window.ReactFire = require('reactfire');
 // window.Firebase = require('firebase');
 
 var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components: {} };
+ChatApp.loaded = false;
 window.ChatApp = ChatApp;
 
-// Models
-require("./Room");
 require("./User");
-
-// Collections
-require("./RoomsCollection.js");
 require("./UsersCollection.js");
 
 
+
+require("./Room");
+require("./RoomsCollection.js");
+
 // Components
 require("./RoomSelectorComponents.jsx");
+
+require("./router.jsx");
+
+$(function(){
+
+ // Backbone.history.start({pushState: true, root: '/'});
+  Backbone.history.start();
+
+});
