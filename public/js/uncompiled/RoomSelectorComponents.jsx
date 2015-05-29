@@ -9,9 +9,12 @@ ChatApp.Components.RoomCreateForm = React.createClass({
   },
   render: function(){
     return (
-      <form onSubmit={this.handleSubmit}>
-        <input type="text" ref="room_name" />
-        <button>Create</button>
+      <form className="ui form" onSubmit={this.handleSubmit}>
+        <div className="six wide field">
+          <label>Create a new room</label>
+          <input type="text" ref="room_name" />
+        </div>
+        <button className="ui submit button">Create</button>
       </form>
     );
   }
@@ -28,22 +31,20 @@ ChatApp.Components.RoomItemComponent = React.createClass({
   render: function(){
     console.log('In room item render');
     return (
-      <div onClick={this.enterRoom}>
-        <h2>{this.props.roomName}</h2>
-        <h3>Users</h3>
-          {this.props.users.map(function(user){
-             return <li>{user}</li>  
-          })}
-          <hr />
+      <div className="ui card" onClick={this.enterRoom}>
+        <div className="content">
+          <h2>{this.props.roomName}</h2>
+          <h3>Users</h3>
+            {this.props.users.map(function(user){
+              return <li>{user}</li>  
+            })}
+        </div>
       </div>
     );
   }
 });
 
-
-
 ChatApp.Components.RoomBoxComponent = React.createClass({
-
   componentDidMount: function(){
     this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
   },
@@ -61,7 +62,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
     var rooms = this.props.collection.models.map(function(room){
       return (
         <div>
-            <ChatApp.Components.RoomItemComponent key={room.id} id={room.id} roomName={room.get("roomName")} users={room.get("users")} />
+          <ChatApp.Components.RoomItemComponent key={room.id} id={room.id} roomName={room.get("roomName")} users={room.get("users")} />
         </div>
       ) 
     })
@@ -70,7 +71,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
 
     return (
       <div>
-        <h1>Room Box</h1>
+         <div className= "ui orange huge header">SIMPLE.chat</div>
         <div>
           {form}
         </div>

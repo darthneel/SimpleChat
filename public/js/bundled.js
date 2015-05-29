@@ -20032,9 +20032,12 @@ ChatApp.Components.RoomCreateForm = React.createClass({displayName: "RoomCreateF
   },
   render: function(){
     return (
-      React.createElement("form", {onSubmit: this.handleSubmit}, 
-        React.createElement("input", {type: "text", ref: "room_name"}), 
-        React.createElement("button", null, "Create")
+      React.createElement("form", {className: "ui form", onSubmit: this.handleSubmit}, 
+        React.createElement("div", {className: "six wide field"}, 
+          React.createElement("label", null, "Create a new room"), 
+          React.createElement("input", {type: "text", ref: "room_name"})
+        ), 
+        React.createElement("button", {className: "ui submit button"}, "Create")
       )
     );
   }
@@ -20051,22 +20054,20 @@ ChatApp.Components.RoomItemComponent = React.createClass({displayName: "RoomItem
   render: function(){
     console.log('In room item render');
     return (
-      React.createElement("div", {onClick: this.enterRoom}, 
-        React.createElement("h2", null, this.props.roomName), 
-        React.createElement("h3", null, "Users"), 
-          this.props.users.map(function(user){
-             return React.createElement("li", null, user)  
-          }), 
-          React.createElement("hr", null)
+      React.createElement("div", {className: "ui card", onClick: this.enterRoom}, 
+        React.createElement("div", {className: "content"}, 
+          React.createElement("h2", null, this.props.roomName), 
+          React.createElement("h3", null, "Users"), 
+            this.props.users.map(function(user){
+              return React.createElement("li", null, user)  
+            })
+        )
       )
     );
   }
 });
 
-
-
 ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
-
   componentDidMount: function(){
     this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
   },
@@ -20084,7 +20085,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
     var rooms = this.props.collection.models.map(function(room){
       return (
         React.createElement("div", null, 
-            React.createElement(ChatApp.Components.RoomItemComponent, {key: room.id, id: room.id, roomName: room.get("roomName"), users: room.get("users")})
+          React.createElement(ChatApp.Components.RoomItemComponent, {key: room.id, id: room.id, roomName: room.get("roomName"), users: room.get("users")})
         )
       ) 
     })
@@ -20093,7 +20094,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
 
     return (
       React.createElement("div", null, 
-        React.createElement("h1", null, "Room Box"), 
+         React.createElement("div", {className: "ui orange huge header"}, "SIMPLE.chat"), 
         React.createElement("div", null, 
           form
         ), 
@@ -20144,10 +20145,6 @@ function appStart(){
   ChatApp.loaded = !ChatApp.loaded;
 };
 
-// function loadCheck(){
-//   Chatapp.loaded ? return : appStart()
-// };
-
 ChatApp.Router.AppRouter = Backbone.Router.extend({
   initialize: function(){
     console.log('router made');
@@ -20162,9 +20159,6 @@ ChatApp.Router.AppRouter = Backbone.Router.extend({
 var router = new ChatApp.Router.AppRouter();
 
 router.on('route:home', function(){
-  // if (!ChatApp.loaded) {
-  //   loadCheck()
-  // };
 
   console.log('home route');
 

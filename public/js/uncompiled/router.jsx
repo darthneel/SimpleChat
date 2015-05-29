@@ -4,10 +4,6 @@ function appStart(){
   ChatApp.loaded = !ChatApp.loaded;
 };
 
-// function loadCheck(){
-//   Chatapp.loaded ? return : appStart()
-// };
-
 ChatApp.Router.AppRouter = Backbone.Router.extend({
   initialize: function(){
     console.log('router made');
@@ -22,9 +18,6 @@ ChatApp.Router.AppRouter = Backbone.Router.extend({
 var router = new ChatApp.Router.AppRouter();
 
 router.on('route:home', function(){
-  // if (!ChatApp.loaded) {
-  //   loadCheck()
-  // };
 
   console.log('home route');
 
