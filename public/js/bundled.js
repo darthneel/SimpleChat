@@ -20054,14 +20054,17 @@ ChatApp.Components.RoomItemComponent = React.createClass({displayName: "RoomItem
   render: function(){
     console.log('In room item render');
     return (
-      React.createElement("div", {className: "ui card", onClick: this.enterRoom}, 
-        React.createElement("div", {className: "content"}, 
-          React.createElement("h2", null, this.props.roomName), 
-          React.createElement("h3", null, "Users"), 
+      React.createElement("div", {className: "content", onClick: this.enterRoom}, 
+        React.createElement("h2", null, this.props.roomName), 
+          React.createElement("div", {className: "ui list"}, 
             this.props.users.map(function(user){
-              return React.createElement("li", null, user)  
+              return (
+                React.createElement("div", {className: "item"}, 
+                  React.createElement("i", {className: "right triangle icon"}), React.createElement("div", {className: "content"}, user)
+                )
+              )
             })
-        )
+          )
       )
     );
   }
@@ -20084,7 +20087,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
     console.log('in roombox render');
     var rooms = this.props.collection.models.map(function(room){
       return (
-        React.createElement("div", null, 
+        React.createElement("div", {className: "card"}, 
           React.createElement(ChatApp.Components.RoomItemComponent, {key: room.id, id: room.id, roomName: room.get("roomName"), users: room.get("users")})
         )
       ) 
@@ -20098,10 +20101,10 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
         React.createElement("div", null, 
           form
         ), 
-
-          rooms, 
-
-        React.createElement("h3", null, "Bottom")
+        React.createElement("br", null), 
+        React.createElement("div", {className: "ui link cards"}, 
+          rooms
+        )
       )
     );
   }

@@ -31,14 +31,17 @@ ChatApp.Components.RoomItemComponent = React.createClass({
   render: function(){
     console.log('In room item render');
     return (
-      <div className="ui card" onClick={this.enterRoom}>
-        <div className="content">
-          <h2>{this.props.roomName}</h2>
-          <h3>Users</h3>
+      <div className="content" onClick={this.enterRoom}>
+        <h2>{this.props.roomName}</h2>
+          <div className="ui list">
             {this.props.users.map(function(user){
-              return <li>{user}</li>  
+              return (
+                <div className="item">
+                  <i className="right triangle icon"></i><div className="content">{user}</div>  
+                </div>
+              )
             })}
-        </div>
+          </div>
       </div>
     );
   }
@@ -61,7 +64,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
     console.log('in roombox render');
     var rooms = this.props.collection.models.map(function(room){
       return (
-        <div>
+        <div className="card">
           <ChatApp.Components.RoomItemComponent key={room.id} id={room.id} roomName={room.get("roomName")} users={room.get("users")} />
         </div>
       ) 
@@ -75,10 +78,10 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
         <div>
           {form}
         </div>
-
+        <br />
+        <div className="ui link cards">
           {rooms}
-
-        <h3>Bottom</h3>
+        </div>
       </div>
     );
   }
