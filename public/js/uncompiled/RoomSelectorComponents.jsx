@@ -24,8 +24,7 @@ ChatApp.Components.RoomItemComponent = React.createClass({
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
-  enterRoom: function(){
-
+  enterRoom: function(){ 
     Backbone.history.navigate('/rooms/' + this.props.id, {trigger: true});
   },
   render: function(){
@@ -47,18 +46,77 @@ ChatApp.Components.RoomItemComponent = React.createClass({
   }
 });
 
-ChatApp.Components.RoomBoxComponent = React.createClass({
+
+ChatApp.Components.UsernameModalComponent = React.createClass({
   componentDidMount: function(){
-    this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
+    this.node = this.getDOMNode();
+    this.$modal = $(this.node);
+    this.$main = $("<div><div class='ui orange huge header'>One step left!</div></div>");
+    this.$content = $("<div class='ui content'></div>");
+    this.$toReplace = $("<div></div>")
+    this.$main.append(this.$content.append(this.$toReplace))
+    this.$modal.append(this.$main)
+    
+    this.renderForm();
+
+  },
+  componentWillReceiveProps: function(props){
+    if (props.open) {
+      this.$modal.modal('show');
+    } else {
+      this.$modal.modal('hide modal');
+    }
+  },
+  onDeny: function(){
+    console.log('denied');
+    this.$modal.modal('hide modal');
+  },
+  onApprove: function(){
+    console.log('approved');
+    this.$modal.modal('hide modal');
+  },
+  renderForm: function(){
+    React.render(
+        <div className="ui">
+          <form className="ui form">
+            <div className="six wide field">
+              <label>Enter your handle</label>
+              <input type="text" />
+            </div>
+          </form>          
+            <div className="ui negative button" onClick={this.onDeny}>Cancel</div>
+            <div className="ui positive right labeled icon button" onClick={this.onApprove}>
+              Enter room
+              <i className="checkmark icon"></i>
+            </div>
+        </div>,
+        this.$toReplace[0]
+    ) 
+  },
+  render: function(){
+    return ( 
+      <div className="username-form ui small modal grid" />
+    )
+  }
+});
+
+ChatApp.Components.RoomBoxComponent = React.createClass({
+  getInitialState: function() {
+    return { showForm: false };
+  },
+  showForm: function() {
+        
+  },
+  componentDidMount: function(){
+    this.props.collection.on('add remove change', this.forceUpdate.bind(this, null));
   },
   onFormSubmit: function(roomName){
-    var userName = this.displayUsernameModal();
+    this.displayUsernameModal();
     
     var newRoomInfo = this.props.collection.create( { roomName: roomName, chatLog: {Room: "Welcome to " + roomName}, users: [userName] } );
   },
   displayUsernameModal: function(){
-    var userName = prompt("Enter your username")
-    return userName;
+    this.setState({showForm: true});
   },
   render: function(){
     console.log('in roombox render');
@@ -72,6 +130,8 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
 
     var form = <ChatApp.Components.RoomCreateForm onFormSubmit={this.onFormSubmit} />
 
+    var modal = <ChatApp.Components.UsernameModalComponent open={this.state.showForm} />
+
     return (
       <div>
          <div className= "ui orange huge header">SIMPLE.chat</div>
@@ -82,6 +142,7 @@ ChatApp.Components.RoomBoxComponent = React.createClass({
         <div className="ui link cards">
           {rooms}
         </div>
+          {modal}
       </div>
     );
   }

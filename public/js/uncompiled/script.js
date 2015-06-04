@@ -10,6 +10,9 @@ var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components:
 ChatApp.loaded = false;
 window.ChatApp = ChatApp;
 
+var router;
+window.rotuer = router;
+
 require("./User");
 require("./UsersCollection.js");
 

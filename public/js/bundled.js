@@ -11,6 +11,9 @@ var ChatApp = ChatApp || { Models: {}, Collections : {}, Router: {}, Components:
 ChatApp.loaded = false;
 window.ChatApp = ChatApp;
 
+var router;
+window.rotuer = router;
+
 require("./User");
 require("./UsersCollection.js");
 
@@ -20029,6 +20032,8 @@ ChatApp.Components.RoomCreateForm = React.createClass({displayName: "RoomCreateF
 
     console.log("Submit clicked");
     this.props.onFormSubmit(roomName);
+    // create the room using the collection
+    // trigger 'enter room' event
   },
   render: function(){
     return (
@@ -20047,8 +20052,7 @@ ChatApp.Components.RoomItemComponent = React.createClass({displayName: "RoomItem
   componentDidMount: function(){ 
     console.log("roomitemcomp mounted");
   },
-  enterRoom: function(){
-
+  enterRoom: function(){ 
     Backbone.history.navigate('/rooms/' + this.props.id, {trigger: true});
   },
   render: function(){
@@ -20070,18 +20074,89 @@ ChatApp.Components.RoomItemComponent = React.createClass({displayName: "RoomItem
   }
 });
 
-ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
+        // <form class='ui form'>
+        //     <div class='six wide field'>
+        //       <label>Enter your handle</label>
+        //       <input type='text ref' 'username' />
+        //     </div>
+        //   </form>
+        //   <div class='ui negative button'>Cancel</div>
+        //   <div class='ui positive right labeled icon button'>
+        //     Enter room
+        //     <i class='checkmark icon'></i>
+        //   </div>
+        // </div>")
+
+ChatApp.Components.UsernameModalComponent = React.createClass({displayName: "UsernameModalComponent",
   componentDidMount: function(){
-    this.props.collection.on('add remove change:roomName', this.forceUpdate.bind(this, null));
+    this.node = this.getDOMNode();
+    this.$modal = $(this.node);
+    this.$main = $("<div><div class='ui orange huge header'>One step left!</div></div>");
+    this.$content = $("<div class='ui content'></div>");
+    this.$toReplace = $("<div></div>")
+    this.$main.append(this.$content.append(this.$toReplace))
+    this.$modal.append(this.$main)
+    
+    this.renderForm();
+
+  },
+  componentWillReceiveProps: function(props){
+    if (props.open) {
+      this.$modal.modal('show');
+    } else {
+      this.$modal.modal('hide modal');
+    }
+  },
+  onDeny: function(){
+    console.log('denied');
+    this.$modal.modal('hide modal');
+  },
+  onApprove: function(){
+    console.log('approved');
+    this.$modal.modal('hide modal');
+  },
+  renderForm: function(){
+    React.render(
+        React.createElement("div", {className: "ui"}, 
+          React.createElement("form", {className: "ui form"}, 
+            React.createElement("div", {className: "six wide field"}, 
+              React.createElement("label", null, "Enter your handle"), 
+              React.createElement("input", {type: "text"})
+            )
+          ), 
+            React.createElement("div", {className: "ui negative button", onClick: this.onDeny}, "Cancel"), 
+            React.createElement("div", {className: "ui positive right labeled icon button", onClick: this.onApprove}, 
+              "Enter room", 
+              React.createElement("i", {className: "checkmark icon"})
+            )
+        ),
+        this.$toReplace[0]
+    ) 
+  },
+  render: function(){
+    return ( 
+      React.createElement("div", {className: "username-form ui small modal grid"})
+    )
+  }
+});
+
+ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxComponent",
+  getInitialState: function() {
+    return { showForm: false };
+  },
+  showForm: function() {
+        
+  },
+  componentDidMount: function(){
+    this.props.collection.on('add remove change', this.forceUpdate.bind(this, null));
   },
   onFormSubmit: function(roomName){
-    var userName = this.displayUsernameModal();
+    this.displayUsernameModal();
     
     var newRoomInfo = this.props.collection.create( { roomName: roomName, chatLog: {Room: "Welcome to " + roomName}, users: [userName] } );
   },
   displayUsernameModal: function(){
-    var userName = prompt("Enter your username")
-    return userName;
+    this.setState({showForm: true});
   },
   render: function(){
     console.log('in roombox render');
@@ -20095,6 +20170,8 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
 
     var form = React.createElement(ChatApp.Components.RoomCreateForm, {onFormSubmit: this.onFormSubmit})
 
+    var modal = React.createElement(ChatApp.Components.UsernameModalComponent, {open: this.state.showForm})
+
     return (
       React.createElement("div", null, 
          React.createElement("div", {className: "ui orange huge header"}, "SIMPLE.chat"), 
@@ -20104,7 +20181,8 @@ ChatApp.Components.RoomBoxComponent = React.createClass({displayName: "RoomBoxCo
         React.createElement("br", null), 
         React.createElement("div", {className: "ui link cards"}, 
           rooms
-        )
+        ), 
+          modal
       )
     );
   }
@@ -20142,16 +20220,13 @@ ChatApp.Collections.UsersCollection = Backbone.Firebase.Collection.extend({
 
 
 },{}],164:[function(require,module,exports){
-function appStart(){
-  ChatApp.collection = new ChatApp.Collections.RoomsCollection()
-  var RoomBoxElement = React.render(React.createElement(ChatApp.Components.RoomBoxComponent, {collection: ChatApp.collection}), $('.roombox')[0]);
-  ChatApp.loaded = !ChatApp.loaded;
-};
 
 ChatApp.Router.AppRouter = Backbone.Router.extend({
   initialize: function(){
     console.log('router made');
-    appStart();
+      ChatApp.collection = new ChatApp.Collections.RoomsCollection()
+      this.RoomBoxElement = React.render(React.createElement(ChatApp.Components.RoomBoxComponent, {collection: ChatApp.collection}), $('.main')[0]);
+      ChatApp.loaded = !ChatApp.loaded;
   },
   routes: {
     "": "home",
@@ -20159,7 +20234,7 @@ ChatApp.Router.AppRouter = Backbone.Router.extend({
   }
 });
 
-var router = new ChatApp.Router.AppRouter();
+router = new ChatApp.Router.AppRouter();
 
 router.on('route:home', function(){
 
@@ -20168,7 +20243,6 @@ router.on('route:home', function(){
 });
 
 router.on('route:rooms', function(id){
-  console.log('rooms route')
   console.log(id);
 });
 
