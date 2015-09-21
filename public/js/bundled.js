@@ -12,7 +12,7 @@ ChatApp.loaded = false;
 window.ChatApp = ChatApp;
 
 var router;
-window.rotuer = router;
+window.router = router;
 
 require("./User");
 require("./UsersCollection.js");
